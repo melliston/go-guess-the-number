@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"regexp"
 	"strconv"
 )
 
 func main() {
 	var toGuess int
+	var nonNumericRegex = regexp.MustCompile(`[^0-9 ]+`)
 	guesses := 0
 	guessed := false
 
@@ -27,12 +29,16 @@ func main() {
 			log.Fatal(err)
 		}
 
+		guess = nonNumericRegex.ReplaceAllString(guess, "")
+
 		guessInt, err = strconv.Atoi(guess)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		if toGuess == guessInt {
+			fmt.Println("Congratulations! You guessed the number correctly!")
+			fmt.Printf("It took %d guesses!\n", guesses)
 			break
 		}
 
