@@ -2,54 +2,80 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"regexp"
 	"strconv"
 )
 
-func main() {
-	var toGuess int
-	var nonNumericRegex = regexp.MustCompile(`[^0-9 ]+`)
-	guesses := 0
-	guessed := false
+type game struct {
+	gameOver bool
+	toGuess  int
+	guess    int
+	guesses  int
+}
 
-	// Sees the number
-	toGuess = rand.Intn(99) + 1 // To guess between 1-100
+func main() {
+	g := game{}
+	g.init()
+	g.titleText()
+	g.loop()
+}
+
+func (g *game) init() {
+	// Seed the number
+	g.toGuess = rand.Intn(99) + 1 // To guess between 1-100
+	g.gameOver = false
+	g.guesses = 0
+}
+
+func (g *game) loop() {
+	for !g.gameOver {
+
+		fmt.Println("Enter your guess:")
+		guess, err := g.getInput()
+		if err != nil {
+			fmt.Println("Invalid guess, please enter a number from 1 to 100")
+			continue
+		}
+
+		g.guesses++
+
+		if g.toGuess == guess {
+			fmt.Println("Congratulations! You guessed the number correctly!")
+			fmt.Printf("It took %d guesses!\n", g.guesses)
+			g.gameOver = true
+		}
+
+		if guess < g.toGuess {
+			fmt.Println("Higher")
+		}
+		if guess > g.toGuess {
+			fmt.Println("Lower")
+		}
+	}
+}
+
+func (g *game) getInput() (int, error) {
+	var nonNumericRegex = regexp.MustCompile(`[^0-9 ]+`)
+	var guessString string
+	_, err := fmt.Scanln(&guessString)
+	if err != nil {
+		return 0, err
+	}
+
+	guessString = nonNumericRegex.ReplaceAllString(guessString, "")
+
+	guessInt, err := strconv.Atoi(guessString)
+	if err != nil {
+		return 0, err
+	}
+
+	return guessInt, nil
+
+}
+
+func (g *game) titleText() {
 	fmt.Println("Guess the number...")
 	fmt.Println("Between 1 and 100")
 
-	for !guessed {
-		var guess string
-		var guessInt int
-
-		fmt.Println("Enter your guess:")
-		_, err := fmt.Scanln(&guess)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		guess = nonNumericRegex.ReplaceAllString(guess, "")
-
-		guessInt, err = strconv.Atoi(guess)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		if toGuess == guessInt {
-			fmt.Println("Congratulations! You guessed the number correctly!")
-			fmt.Printf("It took %d guesses!\n", guesses)
-			break
-		}
-
-		if guessInt < toGuess {
-			fmt.Println("Higher")
-		}
-		if guessInt > toGuess {
-			fmt.Println("lower")
-		}
-
-		guesses++
-
-	}
 }
