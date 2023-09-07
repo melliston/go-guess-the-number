@@ -21,6 +21,7 @@ func main() {
 	g.loop()
 }
 
+// init sets the initial state of the game.
 func (g *game) init() {
 	// Seed the number
 	g.toGuess = rand.Intn(99) + 1 // To guess between 1-100
@@ -28,6 +29,7 @@ func (g *game) init() {
 	g.guesses = 0
 }
 
+// loop the main game loop where the guessing happens
 func (g *game) loop() {
 	for !g.gameOver {
 
@@ -56,6 +58,7 @@ func (g *game) loop() {
 	g.playAgain()
 }
 
+// playAgain on completion of a successful game the user is asked if they would like to play again.
 func (g *game) playAgain() {
 	fmt.Println("Would you like to play again? (Y/N)")
 	var playAgain string
@@ -72,22 +75,24 @@ func (g *game) playAgain() {
 	}
 }
 
-func (g *game) getInput() (int, error) {
+// getInput asks the user for the number.
+// Sanitizes any erroneous input returning just the guess or err
+func (g *game) getInput() (guess int, err error) {
 	var nonNumericRegex = regexp.MustCompile(`[^0-9 ]+`)
 	var guessString string
-	_, err := fmt.Scanln(&guessString)
+	_, err = fmt.Scanln(&guessString)
 	if err != nil {
 		return 0, err
 	}
 
 	guessString = nonNumericRegex.ReplaceAllString(guessString, "")
 
-	guessInt, err := strconv.Atoi(guessString)
+	guess, err = strconv.Atoi(guessString)
 	if err != nil {
 		return 0, err
 	}
 
-	return guessInt, nil
+	return guess, nil
 
 }
 
