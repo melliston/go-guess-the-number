@@ -53,6 +53,23 @@ func (g *game) loop() {
 			fmt.Println("Lower")
 		}
 	}
+	g.playAgain()
+}
+
+func (g *game) playAgain() {
+	fmt.Println("Would you like to play again? (Y/N)")
+	var playAgain string
+	_, err := fmt.Scanln(&playAgain)
+	if err != nil {
+		return
+	}
+
+	if playAgain == "y" || playAgain == "Y" {
+		g.init()
+		g.titleText()
+		g.loop()
+
+	}
 }
 
 func (g *game) getInput() (int, error) {
@@ -77,5 +94,4 @@ func (g *game) getInput() (int, error) {
 func (g *game) titleText() {
 	fmt.Println("Guess the number...")
 	fmt.Println("Between 1 and 100")
-
 }
